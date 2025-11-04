@@ -77,11 +77,23 @@ export const AuthProvider: React.FC<{
     };
     checkAuth();
 
-    // Cleanup: Clear timer when component unmounts
+    // Listen for storage changes in other tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      // If any auth-related data changed, reload to sync state
+      if (e.key === 'token' || e.key === 'user' || e.key === 'expiry') {
+        console.log('Auth state changed in another tab, reloading to sync...');
+        window.location.reload();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Cleanup: Clear timer and event listener when component unmounts
     return () => {
         if (expiryTimerRef.current) {
             clearTimeout(expiryTimerRef.current);
         }
+        window.removeEventListener('storage', handleStorageChange);
     };
   }, []); // Runs only on mount/unmount
 
