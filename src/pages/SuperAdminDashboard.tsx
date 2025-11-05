@@ -5,8 +5,10 @@ import { StatCard } from '../components/StatCard'
 import { LoadingSkeleton } from '../components/LoadingSkeleton'
 import { ErrorAlert } from '../components/ErrorAlert'
 import { EmptyState } from '../components/EmptyState'
+import { useAuth } from '../context/AuthContext'
 
 export const SuperAdminDashboard: React.FC = () => {
+  const { getToken } = useAuth();
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [stats, setStats] = useState<any>(null)
@@ -24,10 +26,10 @@ export const SuperAdminDashboard: React.FC = () => {
     setLoading(true)
     setError(null)
     try {
-    
-       const response = await fetch(
-        `/admin/dashboard/summary?period=${period}` 
-          // const response = await fetch(`http://localhost:5001/test-donate-tags/us-central1/api/admin/dashboard/summary?period=${period}`
+        const token = getToken();
+        const response = await fetch(
+          `https://us-central1-test-donate-tags.cloudfunctions.net/api/admin/dashboard/summary?period=${period}` 
+          , {headers: { 'Authorization': `Bearer ${token}` } }
 
 
       )
